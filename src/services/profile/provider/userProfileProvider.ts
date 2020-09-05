@@ -1,34 +1,32 @@
 import dotenv from "dotenv";
+import { BaseProvider } from "../../../provider/baseProvider";
+import { DatabaseManager } from "../../../databaseManager/DataBaseManager";
 
 dotenv.config();
 
-export class UserProfileProvider {
+export class UserProfileProvider extends BaseProvider {
 
-    private userData = [
-        {
-            name: 'Lazy Panda',
-            role: 'Developer',
-            website: 'https://lazypandatech.com'
-        },
-        {
-            name: 'User 1',
-            role: 'Student',
-            website: 'https://google.com'
-        },
-        {
-            name: 'User 2',
-            role: 'Manager',
-            website: 'https://youtube.com'
-        }
-    ]
+    private dbConnect: DatabaseManager;
+    private searchUserProfileSQL = "SELECT name, role, website from tutorial where tutorial.name=";
 
-    constructor() { }
+    constructor() {
+        super();
+        this.dbConnect = new DatabaseManager();
+    }
 
-    fetchUserProfile(query: string) {
+    async fetchUserProfile(query: string) {
         const searchTerm = query.replace(/\'/gi,'');
-        const searchUser = this.userData.filter(user => user.name === searchTerm);
+        const searchUserSQL = `${this.searchUserProfileSQL}'${searchTerm}'`;
+
+        let response;
+        try {
+            response = await this.runQuery(this.dbConnect, searchUserSQL);
+        } catch(e) {
+            response = 'Exception';
+        }
+
         return {
-            data: searchUser
+            data: response
         }
     }
 }
