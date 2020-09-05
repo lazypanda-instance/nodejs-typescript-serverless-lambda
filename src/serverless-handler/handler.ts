@@ -9,6 +9,7 @@ const ALLOWED_ORIGINS = [
 	'http://localhost:4500'
 ];
 
+
 export const getHeaders = (event: APIGatewayEvent) => {
     const origin = event.headers.origin;
     let headers;
